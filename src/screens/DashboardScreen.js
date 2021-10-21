@@ -3,15 +3,20 @@ import { StyleSheet, ScrollView, View } from "react-native";
 import { Caption, Title, Surface, Button } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
-import { fetchPlanetData } from "../store/actions/planetAction";
+import { fetchPlanetsData } from "../store/actions/planetAction";
+import { fetchVehiclesData } from "../store/actions/vehicleAction";
 
 import DestinationCard from "../components/DestinationCard";
 
 const DashboardScreen = () => {
   const dispatch = useDispatch();
+  const destinations = useSelector(
+    (state) => state.selectedDestination.destinations
+  );
 
   React.useEffect(() => {
-    dispatch(fetchPlanetData());
+    dispatch(fetchPlanetsData());
+    dispatch(fetchVehiclesData());
   }, [dispatch]);
 
   return (
@@ -22,10 +27,14 @@ const DashboardScreen = () => {
         showsHorizontalScrollIndicator={false}
         pagingEnabled
       >
-        <DestinationCard destination="Destination - 1" />
-        <DestinationCard destination="Destination - 2" />
-        <DestinationCard destination="Destination - 3" />
-        <DestinationCard destination="Destination - 4" />
+        {destinations.map((destination) => (
+          <DestinationCard
+            key={destination.destination}
+            destination={`Destination - ${destination.destination}`}
+            destinationNum={destination.destination}
+            planet={destination.planet.name}
+          />
+        ))}
       </ScrollView>
       <Surface style={styles.timeTaken}>
         <Title>Time Taken: 0</Title>
@@ -37,6 +46,7 @@ const DashboardScreen = () => {
           onPress={() => console.log("Pressed")}
           contentStyle={{ height: 58, width: "100%" }}
           style={styles.findBtn}
+          disabled
         >
           Find Falcone
         </Button>

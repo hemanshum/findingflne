@@ -1,30 +1,31 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
-import { RadioButton, Text } from "react-native-paper";
+import { RadioButton, Text, Caption } from "react-native-paper";
 
-const VehiclesRadioBtns = () => {
-  const [value, setValue] = React.useState("first");
+const VehiclesRadioBtns = (props) => {
+  const [value, setValue] = React.useState("");
+  const vehicles = useSelector((state) => state.vehicle.vehicles);
+
   return (
     <RadioButton.Group
-      onValueChange={(newValue) => setValue(newValue)}
+      onValueChange={(newValue) => {
+        setValue(newValue);
+        props.setVehicle(value);
+      }}
       value={value}
     >
-      <View style={styles.radioBtn}>
-        <RadioButton value="first" />
-        <Text>First</Text>
-      </View>
-      <View style={styles.radioBtn}>
-        <RadioButton value="second" />
-        <Text>Second</Text>
-      </View>
-      <View style={styles.radioBtn}>
-        <RadioButton value="three" />
-        <Text>Three</Text>
-      </View>
-      <View style={styles.radioBtn}>
-        <RadioButton value="four" />
-        <Text>Four</Text>
-      </View>
+      {vehicles.map((vehicle) => (
+        <View key={vehicle.name} style={styles.radioBtn}>
+          <RadioButton value={vehicle.name} />
+          <Text>
+            {vehicle.name} ({vehicle.total_no}) -{" "}
+            <Caption>
+              Max Distance: {vehicle.max_distance}, Speed: {vehicle.speed}
+            </Caption>
+          </Text>
+        </View>
+      ))}
     </RadioButton.Group>
   );
 };
