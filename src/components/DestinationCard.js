@@ -1,35 +1,79 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { StyleSheet, View, Dimensions, Keyboard } from "react-native";
 import { Surface, Title, TextInput } from "react-native-paper";
 
 import {
   setDestinationPlanet,
   setDestinationVehicle,
+  setTimeTaken,
+  setInfobar,
 } from "../store/slices/destinationSlice";
-import { selectPlanet } from "../store/slices/resultSlice";
+import { selectPlanet, selectVehicle } from "../store/slices/resultSlice";
 
 import VehiclesRadioBtns from "./VehiclesRadioBtns";
 import PlanetList from "./PlanetList";
 
 const DestinationCard = (props) => {
   const dispatch = useDispatch();
+  const vehicles = useSelector((state) => state.vehicle.vehicles);
 
   const [showDropDown, setShowDropDown] = React.useState(false);
 
   const dispatchPlanetHandler = (planet) => {
+    //Manage destinations of planet details
     dispatch(
       setDestinationPlanet({
         destination: props.destinationNum,
         planet,
       })
     );
+
+    //Create an array of Planets for final find API request
     dispatch(
       selectPlanet({
         destinationNum: props.destinationNum,
         name: planet.name,
       })
     );
+
+    //Remove selected vehicle from the array of vehicles
+    dispatch(
+      selectVehicle({
+        destinationNum: props.destinationNum,
+        name: undefined,
+      })
+    );
+
+    //Calculate Time Taken
+    dispatch(setTimeTaken());
+  };
+
+  const dispatchVehicleHandler = (vehicle) => {
+    let vehicleDetails = vehicles.find((item) => item.name === vehicle);
+    //Manage destinations by vehicle
+    dispatch(
+      setDestinationVehicle({
+        destination: props.destinationNum,
+        vehicle: vehicleDetails,
+      })
+    );
+
+    // Create an array of Vehicle for final find API request
+    dispatch(
+      selectVehicle({
+        destinationNum: props.destinationNum,
+        name: vehicle,
+      })
+    );
+
+    //Calculate Time Taken
+    dispatch(setTimeTaken());
+
+    //Show showInfoBar
+    if (props.destinationNum !== "4") {
+      dispatch(setInfobar());
+    }
   };
 
   return (
@@ -40,7 +84,7 @@ const DestinationCard = (props) => {
         label="Select"
         placeholder="Select a Destination"
         mode="outlined"
-        value={props.planet}
+        value={props.planet.name}
         right={
           <TextInput.Icon
             name="menu-down"
@@ -52,7 +96,13 @@ const DestinationCard = (props) => {
         }
       />
       <View style={{ width: "100%" }}>
-        <VehiclesRadioBtns />
+        {props.planet.name ? (
+          <VehiclesRadioBtns
+            planetDist={props.planet.distance}
+            vehicleName={props.vehicle.name}
+            dispatchVehicleHandler={dispatchVehicleHandler}
+          />
+        ) : null}
       </View>
       {showDropDown && (
         <PlanetList
@@ -73,6 +123,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 4,
     borderRadius: 6,
+    minHeight: 400,
   },
   selectDestination: {
     width: "100%",

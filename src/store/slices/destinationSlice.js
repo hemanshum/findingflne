@@ -7,10 +7,16 @@ const initialState = {
       planet: {
         name: "",
       },
+      vehicle: {
+        name: "",
+      },
     },
     {
       destination: "2",
       planet: {
+        name: "",
+      },
+      vehicle: {
         name: "",
       },
     },
@@ -19,15 +25,22 @@ const initialState = {
       planet: {
         name: "",
       },
+      vehicle: {
+        name: "",
+      },
     },
     {
       destination: "4",
       planet: {
         name: "",
       },
+      vehicle: {
+        name: "",
+      },
     },
   ],
   timeTaken: 0,
+  showInfoBar: false,
 };
 
 export const destinationSlice = createSlice({
@@ -40,22 +53,42 @@ export const destinationSlice = createSlice({
       );
 
       state.destinations[destnationIndex].planet = action.payload.planet;
+      state.destinations[destnationIndex].vehicle = { name: "" };
     },
     setDestinationVehicle(state, action) {
-      state.destinations = state.destinations.map((destination) => {
-        if (destination.destinationNum === action.payload.destinationNum) {
-          return [
-            ...state.destinations,
-            { ...destination, vehicle: action.payload.vehicle },
-          ];
+      let destnationIndex = state.destinations.findIndex(
+        (destination) => destination.destination === action.payload.destination
+      );
+
+      state.destinations[destnationIndex].vehicle = action.payload.vehicle;
+    },
+    setTimeTaken(state) {
+      let totalTimeTake = 0;
+      for (let destination of state.destinations) {
+        if (destination.planet.name !== "" && destination.vehicle.name !== "") {
+          totalTimeTake =
+            totalTimeTake +
+            destination.planet.distance / destination.vehicle.speed;
         }
-        return [...state.destinations, action.payload];
-      });
+      }
+      state.timeTaken = totalTimeTake;
+    },
+    setInfobar(state) {
+      state.showInfoBar = !state.showInfoBar;
+    },
+    resetDestination(state) {
+      state.destinations = initialState.destinations;
+      state.timeTaken = initialState.timeTaken;
     },
   },
 });
 
-export const { setDestinationPlanet, setDestinationVehicle } =
-  destinationSlice.actions;
+export const {
+  setDestinationPlanet,
+  setDestinationVehicle,
+  setTimeTaken,
+  resetDestination,
+  setInfobar,
+} = destinationSlice.actions;
 
 export default destinationSlice.reducer;
