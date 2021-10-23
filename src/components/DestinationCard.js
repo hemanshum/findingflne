@@ -1,6 +1,12 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { StyleSheet, View, Dimensions, Keyboard } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { Surface, Title, TextInput } from "react-native-paper";
 
 import {
@@ -19,6 +25,8 @@ const DestinationCard = (props) => {
   const vehicles = useSelector((state) => state.vehicle.vehicles);
 
   const [showDropDown, setShowDropDown] = React.useState(false);
+  const [text, onChangeText] = React.useState("");
+  const [selected, setSelected] = React.useState(false);
 
   const dispatchPlanetHandler = (planet) => {
     //Manage destinations of planet details
@@ -75,42 +83,52 @@ const DestinationCard = (props) => {
       dispatch(setInfobar());
     }
   };
-
   return (
-    <Surface style={styles.destinationCards}>
-      <Title>{props.destination}</Title>
-      <TextInput
-        style={styles.selectDestination}
-        label="Select"
-        placeholder="Select a Destination"
-        mode="outlined"
-        value={props.planet.name}
-        right={
-          <TextInput.Icon
-            name="menu-down"
-            onPress={() => {
-              Keyboard.dismiss();
-              setShowDropDown((toggle) => !toggle);
-            }}
-          />
-        }
-      />
-      <View style={{ width: "100%" }}>
-        {props.planet.name ? (
-          <VehiclesRadioBtns
-            planetDist={props.planet.distance}
-            vehicleName={props.vehicle.name}
-            dispatchVehicleHandler={dispatchVehicleHandler}
-          />
-        ) : null}
-      </View>
-      {showDropDown && (
-        <PlanetList
-          hideDropDown={setShowDropDown}
-          dispatchPlanetHandler={dispatchPlanetHandler}
+    <TouchableWithoutFeedback onPress={() => setShowDropDown(false)}>
+      <Surface style={styles.destinationCards}>
+        <Title>{props.destination}</Title>
+        <TextInput
+          style={styles.selectDestination}
+          label="Select"
+          placeholder="Select a Destination"
+          mode="outlined"
+          value={selected ? text : props.planet.name}
+          onFocus={() => {
+            setSelected(true);
+            setShowDropDown(true);
+          }}
+          onBlur={() => {
+            setSelected(false);
+          }}
+          onChangeText={onChangeText}
+          right={
+            <TextInput.Icon
+              name="menu-down"
+              onPress={() => {
+                Keyboard.dismiss();
+                setShowDropDown((toggle) => !toggle);
+              }}
+            />
+          }
         />
-      )}
-    </Surface>
+        <View style={{ width: "100%" }}>
+          {props.planet.name ? (
+            <VehiclesRadioBtns
+              planetDist={props.planet.distance}
+              vehicleName={props.vehicle.name}
+              dispatchVehicleHandler={dispatchVehicleHandler}
+            />
+          ) : null}
+        </View>
+        {showDropDown && (
+          <PlanetList
+            enteredText={text}
+            hideDropDown={setShowDropDown}
+            dispatchPlanetHandler={dispatchPlanetHandler}
+          />
+        )}
+      </Surface>
+    </TouchableWithoutFeedback>
   );
 };
 

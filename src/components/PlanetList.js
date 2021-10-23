@@ -7,27 +7,47 @@ const PlanetList = (props) => {
   const planets = useSelector((state) => state.planet.planets);
   const selectedPlanetNames = useSelector((state) => state.result.planet_names);
 
+  const [showNotFound, setShowNotFound] = React.useState(false);
+
   return (
     <Portal.Host>
       <Portal>
         <Surface style={styles.surface}>
-          <ScrollView>
+          <ScrollView
+            onContentSizeChange={(w, h) =>
+              h < 50 ? setShowNotFound(true) : setShowNotFound(false)
+            }
+          >
             {planets.map((planet) => {
               if (!selectedPlanetNames.includes(planet.name)) {
-                return (
-                  <List.Item
-                    key={planet.name}
-                    style={styles.listItem}
-                    title={planet.name}
-                    description={`Distance: ${planet.distance}`}
-                    onPress={() => {
-                      props.dispatchPlanetHandler(planet);
-                      props.hideDropDown(false);
-                    }}
-                  />
-                );
+                if (
+                  planet.name
+                    .toLowerCase()
+                    .includes(props.enteredText.toLowerCase())
+                ) {
+                  return (
+                    <List.Item
+                      key={planet.name}
+                      style={styles.listItem}
+                      title={planet.name}
+                      description={`Distance: ${planet.distance}`}
+                      onPress={() => {
+                        props.dispatchPlanetHandler(planet);
+                        props.hideDropDown(false);
+                      }}
+                    />
+                  );
+                }
               }
             })}
+
+            {showNotFound && (
+              <List.Item
+                key={props.enteredText}
+                style={styles.listItem}
+                title="Planet not found..."
+              />
+            )}
           </ScrollView>
         </Surface>
       </Portal>
