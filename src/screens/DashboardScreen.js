@@ -48,7 +48,6 @@ const DashboardScreen = (props) => {
       <Caption>Select planets you want to search in:</Caption>
       <ScrollView
         horizontal
-        showsHorizontalScrollIndicator={false}
         pagingEnabled
         showsHorizontalScrollIndicator
         ref={scrollRef}

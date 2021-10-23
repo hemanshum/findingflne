@@ -100,6 +100,7 @@ const DestinationCard = (props) => {
           onBlur={() => {
             setSelected(false);
           }}
+          spellCheck={false}
           onChangeText={onChangeText}
           right={
             <TextInput.Icon
