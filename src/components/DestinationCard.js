@@ -100,6 +100,9 @@ const DestinationCard = (props) => {
           onBlur={() => {
             setSelected(false);
           }}
+          autoCorrect={false}
+          autoCapitalize="none"
+          autoComplete="off"
           spellCheck={false}
           onChangeText={onChangeText}
           right={
