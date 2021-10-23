@@ -43,6 +43,7 @@ const ResultScreen = (props) => {
           Returned: {finalResult.status} - Planet not found, try again!! 😩
         </Subheading>
       )}
+      <Caption>Time Taken: {props.route.params.timeTaken}</Caption>
       <Button
         mode="outlined"
         icon="restart"

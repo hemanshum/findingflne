@@ -34,6 +34,7 @@ const PlanetList = (props) => {
                       onPress={() => {
                         props.dispatchPlanetHandler(planet);
                         props.hideDropDown(false);
+                        props.onChangeText("");
                       }}
                     />
                   );

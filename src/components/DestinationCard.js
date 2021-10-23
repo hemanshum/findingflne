@@ -127,6 +127,7 @@ const DestinationCard = (props) => {
         {showDropDown && (
           <PlanetList
             enteredText={text}
+            onChangeText={onChangeText}
             hideDropDown={setShowDropDown}
             dispatchPlanetHandler={dispatchPlanetHandler}
           />

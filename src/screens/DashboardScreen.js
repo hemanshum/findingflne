@@ -76,7 +76,7 @@ const DashboardScreen = (props) => {
                 vehicles: selectedPlanets,
               })
             );
-            props.navigation.navigate("Result");
+            props.navigation.navigate("Result", { timeTaken });
           }}
           contentStyle={{ height: 58, width: "100%" }}
           style={styles.findBtn}
