@@ -14,9 +14,30 @@ const MainNavigation = () => {
         <Stack.Screen
           name="Dashboard"
           component={DashboardScreen}
-          options={{ title: "Finding Falcon" }}
+          options={{
+            title: "Finding Falcon",
+            headerStyle: {
+              backgroundColor: "#EAB543",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+          }}
         />
-        <Stack.Screen name="Result" component={ResultScreen} />
+        <Stack.Screen
+          name="Result"
+          component={ResultScreen}
+          options={{
+            headerStyle: {
+              backgroundColor: "#EAB543",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

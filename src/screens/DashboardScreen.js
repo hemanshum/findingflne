@@ -1,6 +1,12 @@
 import React from "react";
-import { StyleSheet, ScrollView, View } from "react-native";
-import { Caption, Title, Surface, Button } from "react-native-paper";
+import { StyleSheet, ScrollView, View, Dimensions } from "react-native";
+import {
+  Caption,
+  Title,
+  Surface,
+  Button,
+  ProgressBar,
+} from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
 import { fetchPlanetsData } from "../store/actions/planetAction";
@@ -16,6 +22,7 @@ const DashboardScreen = (props) => {
   const destinations = useSelector(
     (state) => state.selectedDestination.destinations
   );
+  const [destinationNum, setDestinationNum] = React.useState(1);
   const selectedVehicles = useSelector((state) => state.result.vehicle_names);
   const selectedPlanets = useSelector((state) => state.result.planet_names);
   const timeTaken = useSelector((state) => state.selectedDestination.timeTaken);
@@ -43,14 +50,32 @@ const DashboardScreen = (props) => {
     return unsubscribe;
   }, [props.navigation]);
 
+  const handleScroll = (event) => {
+    let destNum = Math.round(
+      parseFloat(
+        event.nativeEvent.contentOffset.x / Dimensions.get("window").width
+      )
+    );
+    setDestinationNum(destNum + 1);
+  };
+
   return (
     <View style={styles.container}>
+      <View>
+        <ProgressBar
+          style={{ marginVertical: 20, width: 200 }}
+          visible
+          progress={1 / (destinations.length / destinationNum)}
+          color="#3B3B98"
+        />
+      </View>
       <Caption>Select planets you want to search in:</Caption>
       <ScrollView
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator
         ref={scrollRef}
+        onScroll={handleScroll}
       >
         {destinations.map((destination) => (
           <DestinationCard
@@ -69,6 +94,14 @@ const DashboardScreen = (props) => {
         <Button
           icon="account-search"
           mode="contained"
+          color="#EAB543"
+          contentStyle={{ height: 58, width: "100%" }}
+          style={styles.findBtn}
+          disabled={
+            (selectedVehicles.length !== 4 && selectedPlanets !== 4) ||
+            selectedVehicles.includes(undefined) ||
+            selectedPlanets.includes(undefined)
+          }
           onPress={() => {
             dispatch(
               startFindingfalcone({
@@ -78,13 +111,6 @@ const DashboardScreen = (props) => {
             );
             props.navigation.navigate("Result", { timeTaken });
           }}
-          contentStyle={{ height: 58, width: "100%" }}
-          style={styles.findBtn}
-          disabled={
-            (selectedVehicles.length !== 4 && selectedPlanets !== 4) ||
-            selectedVehicles.includes(undefined) ||
-            selectedPlanets.includes(undefined)
-          }
         >
           Find Falcone
         </Button>
